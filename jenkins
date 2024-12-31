@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    environment {
+        SCANNER_HOME = tool 'sonarqube-tool'
+    }
+
+    stages {
+        stage('git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/gow9629608170/java-project.git'
+            }
+        }
+        stage('code analysis') {
+            steps {
+              withSonarQubeEnv('sonarqube-server') {
+               sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=java-project \
+               -Dsonar.java.binaries=. \
+               -Dsonar.projectKey=java-project'''
+              }
+            }
+        }
+        stage('build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        
+        stage('image') {
+            steps {
+                sh 'docker build -t project .'
+            }
+        }
+        stage('container') {
+            steps {
+                sh 'docker run -itd --name java -p 8085:8080 project'
+            }
+            
+        }
+        
+    }
+}
