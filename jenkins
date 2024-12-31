@@ -24,7 +24,15 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
-        
+
+        stage('docker push') {
+         steps {
+         withDockerRegistry(credentialsId: 'docker-cred') {
+             sh 'docker tag java-app2 gow9629608170/java-app2'
+             sh 'docker push gow9629608170/java-app2'
+          }
+          }
+         } 
         stage('image') {
             steps {
                 sh 'docker build -t project .'
