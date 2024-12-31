@@ -32,7 +32,7 @@ pipeline {
         }
         stage('container') {
             steps {
-                sh 'docker run -itd --name java -p 8085:8080 project'
+                sh 'docker run -itd --name java11 -p 8086:8080 project'
             }
             
         }
