@@ -3,13 +3,6 @@ pipeline {
     environment {
         SCANNER_HOME = tool 'sonarqube-tool'
     }
-
-    stages {
-        stage('git') {
-            steps {
-                git branch: 'main', url: 'https://github.com/git-gowtham20/java-project.git'
-            }
-        }
         stage('code analysis') {
             steps {
               withSonarQubeEnv('sonarqube-server') {
