@@ -1,8 +1,16 @@
+
 pipeline {
     agent any
     environment {
         SCANNER_HOME = tool 'sonarqube-tool'
     }
+
+    stages {
+        stage('git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/gow9629608170/java-project.git'
+            }
+        }
         stage('code analysis') {
             steps {
               withSonarQubeEnv('sonarqube-server') {
@@ -17,25 +25,23 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
-
-        stage('docker push') {
+        stage('image') {
+            steps {
+                sh 'docker build -t java-app2 .'
+            }
+        }
+         stage('docker push') {
          steps {
          withDockerRegistry(credentialsId: 'docker-cred') {
-             sh 'docker tag java-app2 git-gowtham20/java-app2'
+             sh 'docker tag java-app2 gow9629608170/java-app2'
              sh 'docker push gow9629608170/java-app2'
           }
           }
          } 
-        stage('image') {
-            steps {
-                sh 'docker build -t project .'
-            }
-        }
         stage('container') {
             steps {
-                sh 'docker run -itd --name java11 -p 8086:8080 project'
+                sh 'docker run -itd --name java-143 -p 8083:8080 java-app2'
             }
-            
         }
         
     }
