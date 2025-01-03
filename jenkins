@@ -25,6 +25,13 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
+        stage('docker-stage') {
+          steps {
+              sh 'docker stop $(docker ps -q) || true'
+              sh 'docker rm $(docker ps -aq) || true'
+              sh 'docker rmi $(docker images -q) || true'
+           }
+        }
         stage('image') {
             steps {
                 sh 'docker build -t java-app2 .'
